@@ -1,0 +1,124 @@
+@import 'vars';
+
+#chart-container {
+  position: relative;
+
+  & > .overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+#chart-container svg {
+  text {
+    fill: #fff;
+  }
+  line {
+    stroke: #fff;
+  }
+
+  .axis.y.left line {
+    stroke-width: 0;
+  }
+  .axis.x.bottom {
+    text {
+      transform: translate(3px, 0);
+      text-anchor: left;
+    }
+    line {
+      stroke-width: 2.5;
+      stroke-linecap: butt;
+      stroke: $white-blue;
+      shape-rendering: crispEdges;
+    }
+  }
+  .axis.x.top.chart-years {
+    text {
+      transform: translate(3px, 0);
+      text-anchor: left;
+    }
+  }
+
+  &.background-graphics {
+    path.tick-line {
+      stroke: rgba($white-blue, 0.2);
+    }
+  }
+}
+
+.panel.chart {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding-bottom: 20px;
+  order: unset !important;
+  padding: 0;
+
+  @media (min-width: $large) {
+    margin: 0 20px 20px 20px;
+    padding-bottom: 0px;
+  }
+
+  @media (min-width: $small) {
+    order: 3;
+  }
+}
+
+.chart-loader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 320px;
+}
+
+.tooltip-content {
+  position: relative;
+
+  & > div {
+    white-space: nowrap;
+    position: absolute;
+    bottom: 13px;
+    left: -45px;
+    color: $gray;
+    padding: 4px 8px;
+    background-color: $yellow;
+    border-radius: 4px;
+  }
+  &.far-right > div {
+    right: 5px;
+    left: auto;
+  }
+}
+
+.chart-years {
+  g,
+  path {
+    stroke-width: 2px;
+    stroke: $white-blue !important;
+  }
+
+  .axis-baseline {
+    display: none;
+  }
+
+  .axis-label {
+    stroke-width: 1px;
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: $xxlarge) {
+  .axis-label {
+    font-size: 10px !important;
+  }
+}
+
+.axis.x.bottom {
+  @media (max-width: $medium) {
+    .axis-label {
+      display: none;
+    }
+  }
+}

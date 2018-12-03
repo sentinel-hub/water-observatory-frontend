@@ -1,0 +1,54 @@
+@import 'vars';
+
+.infobox {
+  margin: 15px 15px 0;
+  border-bottom: 1px dotted $yellow;
+
+  .value {
+    color: $yellow;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 10px 0 0 0;
+
+    @media (min-width: $small) {
+      font-size: 14px;
+    }
+
+    @media (min-width: $medium) {
+      font-size: 16px;
+    }
+
+    @media (min-width: $large) {
+      font-size: 18px;
+    }
+
+    @media (min-width: $xlarge) {
+      font-size: 22px;
+    }
+
+    // max-height query
+    @media (max-height: $medium) {
+      padding: 0;
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+  label {
+    color: #fff;
+    font-size: 14px;
+    margin: 0 0 2px 0;
+    display: block;
+    text-align: right;
+
+    @media (max-height: $large) {
+      padding: 0;
+      font-size: 12px;
+    }
+
+    @media (max-height: $medium) {
+      padding: 0;
+      font-size: 10px;
+      margin: 0;
+    }
+  }
+}

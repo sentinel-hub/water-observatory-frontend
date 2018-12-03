@@ -1,0 +1,40 @@
+@import 'vars';
+
+.search-box {
+  background-color: $light-blue;
+  padding: 15px;
+
+  input {
+    width: 100%;
+    padding: 10px 4px;
+    flex-direction: column;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: rgba($dark-blue, 0.7);
+    border: 1px dotted $yellow;
+    border-radius: 0;
+    box-shadow: none;
+    color: #fff;
+    font-size: 14px;
+    outline-color: white;
+    outline-width: thin;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: rgba(white, 0.3);
+    }
+  }
+
+  label {
+    display: block;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .search-item {
+    padding: 4px;
+    cursor: pointer;
+  }
+}

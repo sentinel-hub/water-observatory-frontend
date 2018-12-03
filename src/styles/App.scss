@@ -1,0 +1,214 @@
+@import 'vars';
+
+html,
+body,
+div#root {
+  min-height: 100vh;
+}
+
+div.loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  i {
+    color: #fff;
+  }
+}
+
+/* headers and footer should be at the top/bottom of the page, unless there is too much content (scroll whole page then) */
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  & > div {
+    flex-shrink: 1;
+    flex-basis: auto;
+
+    &#header {
+      flex-grow: initial;
+
+      /* center content: */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        margin: 30px 0 10px;
+        width: 25%;
+        max-width: 400px;
+        min-width: 150px;
+      }
+
+      .loading {
+        .fa {
+          position: fixed;
+          z-index: 9000;
+          top: 14px;
+          right: 8px;
+
+          @media (min-width: $medium) {
+            top: 24px;
+            right: 14px;
+          }
+
+          @media (min-width: $large) {
+            top: 40px;
+            right: 14px;
+          }
+        }
+      }
+    }
+
+    &#footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      align-self: stretch;
+      flex-grow: initial;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: 0.2px;
+      color: #fff;
+      padding: 14px 0;
+
+      background-color: rgba($dark-blue, 0.7);
+      width: 100%;
+
+      a {
+        color: #fac247;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.error-message {
+  color: white;
+  text-align: center;
+}
+
+.panel {
+  background-color: rgba($dark-blue, 0.7);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  margin: 0px;
+  border: none;
+}
+
+#content {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  flex-grow: 1;
+  flex-flow: wrap;
+
+  // #content query
+  @media (min-width: $large) {
+    padding: 15px 15px 0 15px;
+  }
+
+  // mobile first
+  .panel {
+    flex-grow: 1;
+
+    &.info {
+      width: 100%;
+      order: 1;
+      height: 400px;
+      min-height: 300px;
+    }
+
+    &.map {
+      order: 2;
+      width: 100%;
+      height: 400px;
+    }
+
+    &.waterbody {
+      width: 100%;
+      height: 400px;
+      order: 3;
+    }
+
+    @media (min-width: $medium) {
+      &.info {
+        width: 50%;
+        order: 1;
+        height: auto;
+        padding-bottom: 20px;
+      }
+
+      &.map {
+        order: 2;
+        width: 50%;
+        height: auto;
+      }
+
+      &.waterbody {
+        width: 100%;
+        height: 400px;
+        order: 3;
+      }
+    }
+
+    // .panel query
+    @media (min-width: $large) {
+      margin: 5px 5px 10px 5px;
+
+      &.info {
+        padding-bottom: 20px;
+        width: 20%;
+        order: 1;
+      }
+
+      &.waterbody {
+        width: 40%;
+        order: 2;
+        height: auto;
+      }
+
+      &.map {
+        width: 20%;
+        order: 3;
+      }
+    }
+
+    &.waterbody {
+      background-color: #ccc;
+      display: flex;
+      .waterbody-map {
+        flex: 1;
+        position: relative;
+        .go {
+          position: absolute;
+          width: 50px;
+          height: 45px;
+          bottom: 10px;
+          background-color: $gray;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          .disabled {
+            opacity: 0.2;
+            filter: gray;
+            -webkit-filter: grayscale(1);
+          }
+          &.next {
+            right: 15px;
+          }
+          &.prev {
+            right: 75px;
+          }
+        }
+      }
+    }
+  }
+}

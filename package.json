@@ -1,0 +1,46 @@
+{
+  "name": "wo-frontend",
+  "version": "0.1.0",
+  "homepage": ".",
+  "private": true,
+  "dependencies": {
+    "@turf/bbox": "^6.0.1",
+    "axios": "^0.18.0",
+    "dotenv": "^6.1.0",
+    "lodash": "^4.17.11",
+    "mapbox-gl": "^0.50.0",
+    "moment": "^2.22.2",
+    "react": "^16.5.2",
+    "react-autocomplete": "^1.8.1",
+    "react-dom": "^16.5.2",
+    "react-mapbox-gl": "^4.0.0",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.0.5",
+    "react-sizeme": "^2.5.2",
+    "semiotic": "^1.16.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "lint": "eslint --max-warnings 0 --ext .js src/",
+    "prettier": "prettier --write \"src/**/*.js\"",
+    "test": "react-scripts test",
+    "eject": "echo 'Ejecting is never a good idea. Find another way.'"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "node-sass": "^4.9.4",
+    "prettier": "^1.14.3"
+  }
+}

@@ -1,0 +1,22 @@
+// Breakpoints
+$small: 576px;
+$medium: 770px;
+$large: 992px;
+$xlarge: 1200px;
+$xxlarge: 1440px;
+
+// TODO add used colors
+$dark-blue: #356b90;
+$light-blue: #26accc;
+$white-blue: #e6f2fa;
+$gray: #3f484e;
+$yellow: #e8c26e;
+
+// export for JS use, webpack takes care of this
+:export {
+  small: 576px;
+  medium: 770px;
+  large: 992px;
+  xlarge: 1200px;
+  xxlarge: 1440px;
+}

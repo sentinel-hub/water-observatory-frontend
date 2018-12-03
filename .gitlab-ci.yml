@@ -1,0 +1,127 @@
+image: node:8-alpine
+
+variables:
+  WEBDEV_FTP_HOST: 'webdev1-ssh.sinergise.com'
+  S3_BUCKET_NAME: 'water.blue-dot-observatory.com'
+
+stages:
+  - test
+  - deploy
+
+before_script:
+  # write version, branch & commit id to src/VERSION.js:
+  - 'echo "export const VERSION_INFO = { tag: ''$CI_COMMIT_TAG'', branch: ''$CI_COMMIT_REF_NAME'', commit: ''$CI_COMMIT_SHA'' }" > ./src/VERSION.js'
+
+### TEST: ###
+install_packages_and_run_lint:
+  stage: test
+  when: manual
+  script:
+    - apk add --update git
+    - yarn config set cache-folder .yarn
+    - yarn install
+    - npm run lint
+  artifacts:
+    expire_in: 2 days
+    paths:
+      # we will need the installed packages in next step, so cache might not be enough - we need to create an artifact:
+      - ./node_modules
+
+### DEPLOY: ###
+deploy_testing:
+  stage: deploy
+  when: manual
+  variables:
+    REACT_APP_BASENAME: '/tmp/wo/$CI_COMMIT_REF_SLUG'
+  except:
+    - master
+    - develop
+    - tags
+  script:
+    - CI=true yarn build
+    - mv ./build ./build_testing
+    - export TARGET_DIR="/sentinel/tmp/wo/$CI_COMMIT_REF_SLUG/"
+    - apk add --update ncftp
+    - echo "rm -r $TARGET_DIR; mkdir $TARGET_DIR" | ncftp -u $WEBDEV_FTP_USERNAME -p $WEBDEV_FTP_PASSWORD $WEBDEV_FTP_HOST
+    - ncftpput -u $WEBDEV_FTP_USERNAME -p $WEBDEV_FTP_PASSWORD -R $WEBDEV_FTP_HOST $TARGET_DIR ./build_testing/*
+    - 'echo "Testing URL: https://webdev.sentinel-hub.com/tmp/wo/$CI_COMMIT_REF_SLUG/"'
+  dependencies:
+    - install_packages_and_run_lint
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - ./build_testing
+
+deploy_staging:
+  stage: deploy
+  when: manual
+  variables:
+    REACT_APP_BASENAME: '/water-observatory'
+  only:
+    - develop
+  script:
+    - CI=true yarn build
+    - mv ./build ./build_staging
+    - export TARGET_DIR="/sentinel/water-observatory/"
+    - apk add --update ncftp
+    - echo "rm -r $TARGET_DIR; mkdir $TARGET_DIR" | ncftp -u $WEBDEV_FTP_USERNAME -p $WEBDEV_FTP_PASSWORD $WEBDEV_FTP_HOST
+    - ncftpput -u $WEBDEV_FTP_USERNAME -p $WEBDEV_FTP_PASSWORD -R $WEBDEV_FTP_HOST $TARGET_DIR ./build_staging/*
+    - 'echo "Staging URL: https://webdev.sentinel-hub.com/water-observatory/"'
+  dependencies:
+    - install_packages_and_run_lint
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - ./build_staging
+
+deploy_production:
+  stage: deploy
+  when: manual
+  variables:
+    PUBLIC_URL: '/'
+  only:
+    - tags
+  script:
+    - CI=true yarn build
+    - mv ./build ./build_prod
+    - apk add --update python python-dev py-pip
+    - pip install awscli
+    # deploy sometimes fails if you don't sync clocks in docker container:
+    - hwclock -s
+    - aws s3 sync ./build_prod s3://$S3_BUCKET_NAME/ --acl public-read
+    - INVALIDATION_OUTPUT=$(aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION --paths "/*")
+    - 'echo "INVALIDATION OUTPUT: $INVALIDATION_OUTPUT"'
+    - INVALIDATION_ID=$(echo "$INVALIDATION_OUTPUT" | python -c "import sys, json; print json.load(sys.stdin)['Invalidation']['Id']")
+    - aws cloudfront wait invalidation-completed --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION --id "$INVALIDATION_ID"
+  dependencies:
+    - install_packages_and_run_lint
+  artifacts:
+    expire_in: 100 years
+    paths:
+      - ./build_prod
+
+publish_github:
+  stage: test
+  # when: manual
+  variables:
+    GITHUB_REPO: '/tmp/githubrepo'
+    GITHUB_BRANCH: 'github'
+  # only:
+  #   - master
+  script:
+    - apk add --no-cache --update openssh git
+    - git config --global user.email "info@sinergise.com"
+    - git config --global user.name "Sinergise"
+    - mkdir -p ~/.ssh
+    - echo "$GITHUB_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - ssh-keyscan github.com >> ~/.ssh/known_hosts
+    - chmod 400 ~/.ssh/*
+    - cat ~/.ssh/id_rsa
+    - cat ~/.ssh/known_hosts
+    # - export REPO_DIR="`pwd`"
+    - git clone "$CI_PROJECT_DIR" "$GITHUB_REPO"
+    - cd /tmp/githubrepo/
+    - git remote add ghorigin git@github.com:sentinel-hub/water-observatory-frontend.git
+    - git checkout "$GITHUB_BRANCH" || (git checkout --orphan "$GITHUB_BRANCH" && git commit -m "Initial commit" && git checkout "$GITHUB_BRANCH")
+    # push to github:
+    - git push -u ghorigin "$GITHUB_BRANCH"
