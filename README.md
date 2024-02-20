@@ -1,3 +1,7 @@
+NOTE
+---
+This repository is archived and read-only due to inactivity.
+
 CONFIG
 ---
 
